@@ -3,8 +3,8 @@
 #include <ctype.h>
 
 int main() {
-    char text[100], key[100];
-    int i, j = 0;
+    char text[100], key[100], encrypted[100], decrypted[100];
+    int i, j;
 
     printf("Enter plaintext: ");
     scanf("%s", text);
@@ -15,47 +15,38 @@ int main() {
     int textLen = strlen(text);
     int keyLen = strlen(key);
 
-    char cipher[100];
-
-    // Encryption
+    // 🔐 Encryption
+    j = 0;
     for(i = 0; i < textLen; i++) {
-
         if(isalpha(text[i])) {
-            int shift = key[j] - '0';
+            int shift = key[j % keyLen] - '0';
 
-            if(isupper(text[i])) {
-                cipher[i] = ((text[i] - 'A' + shift) % 26) + 'A';
-            } else {
-                cipher[i] = ((text[i] - 'a' + shift) % 26) + 'a';
-            }
+            if(isupper(text[i]))
+                encrypted[i] = ((text[i] - 'A' + shift) % 26) + 'A';
+            else
+                encrypted[i] = ((text[i] - 'a' + shift) % 26) + 'a';
 
-            j = (j + 1) % keyLen; // move key only for letters
+            j++;
         } else {
-            cipher[i] = text[i]; // keep symbols unchanged
+            encrypted[i] = text[i];
         }
     }
-    cipher[i] = '\0';
+    encrypted[i] = '\0';
 
-    printf("Encrypted Text: %s\n", cipher);
-
-    // Decryption
+    printf("\nEncrypted Text: %s\n", encrypted);
     j = 0;
-    char decrypted[100];
-
     for(i = 0; i < textLen; i++) {
+        if(isalpha(encrypted[i])) {
+            int shift = key[j % keyLen] - '0';
 
-        if(isalpha(cipher[i])) {
-            int shift = key[j] - '0';
+            if(isupper(encrypted[i]))
+                decrypted[i] = ((encrypted[i] - 'A' - shift + 26) % 26) + 'A';
+            else
+                decrypted[i] = ((encrypted[i] - 'a' - shift + 26) % 26) + 'a';
 
-            if(isupper(cipher[i])) {
-                decrypted[i] = ((cipher[i] - 'A' - shift + 26) % 26) + 'A';
-            } else {
-                decrypted[i] = ((cipher[i] - 'a' - shift + 26) % 26) + 'a';
-            }
-
-            j = (j + 1) % keyLen;
+            j++;
         } else {
-            decrypted[i] = cipher[i];
+            decrypted[i] = encrypted[i];
         }
     }
     decrypted[i] = '\0';
