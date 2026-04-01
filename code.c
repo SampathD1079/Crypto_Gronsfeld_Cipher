@@ -3,53 +3,58 @@
 #include <ctype.h>
 
 int main() {
-    char text[100], key[100], encrypted[100], decrypted[100];
+    char text[100], key[100];
+    char cipher[100], decrypted[100];
     int i, j;
 
-    printf("Enter plaintext: ");
+    printf("Enter plaintext : ");
     scanf("%s", text);
 
     printf("Enter numeric key: ");
     scanf("%s", key);
 
-    int textLen = strlen(text);
-    int keyLen = strlen(key);
+    int text_len = strlen(text);
+    int key_len = strlen(key);
 
-  
-    j = 0;
-    for(i = 0; i < textLen; i++) {
+
+    for(i = 0, j = 0; i < text_len; i++) {
         if(isalpha(text[i])) {
-            int shift = key[j % keyLen] - '0';
-
-            if(isupper(text[i]))
-                encrypted[i] = ((text[i] - 'A' + shift) % 26) + 'A';
-            else
-                encrypted[i] = ((text[i] - 'a' + shift) % 26) + 'a';
-
+            int shift = key[j % key_len] - '0';
+            cipher[i] = ((text[i] - 'A' + shift) % 26) + 'A';
             j++;
         } else {
-            encrypted[i] = text[i];
+            cipher[i] = text[i];
         }
     }
-    encrypted[i] = '\0';
+    cipher[text_len] = '\0';
 
-    printf("\nEncrypted Text: %s\n", encrypted);
-    j = 0;
-    for(i = 0; i < textLen; i++) {
-        if(isalpha(encrypted[i])) {
-            int shift = key[j % keyLen] - '0';
+    printf("\nEncrypted Text: %s\n", cipher);
 
-            if(isupper(encrypted[i]))
-                decrypted[i] = ((encrypted[i] - 'A' - shift + 26) % 26) + 'A';
-            else
-                decrypted[i] = ((encrypted[i] - 'a' - shift + 26) % 26) + 'a';
+    unsigned long long hash = 0;
+    unsigned long long p = 31;
+    unsigned long long power = 1;
+    unsigned long long mod = 1000000007;
 
+    for(i = 0; i < text_len; i++) {
+        if(isalpha(cipher[i])) {
+            int val = cipher[i] - 'A' + 1;
+            hash = (hash + val * power) % mod;
+            power = (power * p) % mod;
+        }
+    }
+
+    printf("Hash Value: %llu\n", hash);
+
+    for(i = 0, j = 0; i < text_len; i++) {
+        if(isalpha(cipher[i])) {
+            int shift = key[j % key_len] - '0';
+            decrypted[i] = ((cipher[i] - 'A' - shift + 26) % 26) + 'A';
             j++;
         } else {
-            decrypted[i] = encrypted[i];
+            decrypted[i] = cipher[i];
         }
     }
-    decrypted[i] = '\0';
+    decrypted[text_len] = '\0';
 
     printf("Decrypted Text: %s\n", decrypted);
 
