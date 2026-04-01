@@ -15,7 +15,7 @@ int main() {
     int textLen = strlen(text);
     int keyLen = strlen(key);
 
-    // 🔐 Encryption
+  
     j = 0;
     for(i = 0; i < textLen; i++) {
         if(isalpha(text[i])) {
